@@ -1,15 +1,20 @@
-from flask import Blueprint , render_template 
+from flask import Blueprint, render_template
 
-main = Blueprint('main', __name__)
+main = Blueprint("main", __name__)
 
-@main.route('/')
+
+@main.route("/")
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-
-@main.route('/register')
+@main.route("/register")
 def register():
     # Direct rendering of the choose_role.html when the REGISTER button is clicked
-    return render_template('role.html')
+    return render_template("role.html")
 
+
+@main.route("/login")
+def login():
+    # Direct rendering of the login.html when the LOGIN button is clicked
+    return render_template("login.html")
