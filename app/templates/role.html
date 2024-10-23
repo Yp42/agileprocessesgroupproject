@@ -1,3 +1,4 @@
+<!-- Role Selection Page -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white flex flex-col justify-between min-h-screen">
-    <div class="flex-grow flex items-center justify-center">
+    <form action="/handle_role" method="POST" class="flex-grow flex items-center justify-center">
         <div class="w-full max-w-2xl mx-auto p-8">
             <div class="text-center mb-12">
                 <h1 class="text-4xl font-bold">What is your role?</h1>
@@ -15,20 +16,25 @@
             </div>
             <div class="flex justify-center space-x-10">
                 <div>
-                    <input type="radio" id="owner" name="role" class="hidden peer" checked>
+                    <input type="radio" id="owner" name="role" value="owner" class="hidden peer">
                     <label for="owner" class="cursor-pointer peer-checked:border-blue-500 border-2 border-transparent px-4 py-2 rounded-lg">
                         Restaurant owner
                     </label>
                 </div>
                 <div>
-                    <input type="radio" id="customer" name="role" class="hidden peer">
+                    <input type="radio" id="customer" name="role" value="customer" class="hidden peer">
                     <label for="customer" class="cursor-pointer peer-checked:border-blue-500 border-2 border-transparent px-4 py-2 rounded-lg">
                         Customer
                     </label>
                 </div>
             </div>
+            <div class="mt-8 text-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Continue
+                </button>
+            </div>
         </div>
-    </div>
+    </form>
     <footer class="w-full p-6 absolute bottom-0 right-0">
         <div class="flex justify-end items-center w-full">
             <img src="/static/images/Foodie.png" alt="Foodie logo" class="w-10 h-10 mr-2">
