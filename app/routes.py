@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 main = Blueprint("main", __name__)
 
@@ -16,5 +16,10 @@ def register():
 
 @main.route("/login", methods=("GET", "POST"))
 def login():
-    # Direct rendering of the login.html when the LOGIN button is clicked
-    return render_template("login.html")
+    if request.method == "POST":
+        if request.form["username"] == "123" and request.form["pswd"] == "123":
+            return render_template("index.html")
+        else:
+            return render_template("login.html", failed=True)
+    else:
+        return render_template("login.html")
