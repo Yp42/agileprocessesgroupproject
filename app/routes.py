@@ -14,7 +14,7 @@ def register():
     return render_template("role.html")
 
 
-@main.route("/login")
+@main.route("/login", methods=("GET", "POST"))
 def login():
     # Direct rendering of the login.html when the LOGIN button is clicked
     return render_template("login.html")
