@@ -1,47 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discover Restaurants & Delicious Food</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
 <body class="bg-black text-white">
-    <div
-        class="flex flex-col lg:flex-row justify-between items-center lg:items-start p-8 space-y-8 lg:space-y-0 lg:space-x-8 max-w-6xl mx-auto">
+    <div class="flex flex-col lg:flex-row justify-between items-center lg:items-start p-8 space-y-8 lg:space-y-0 lg:space-x-8 max-w-6xl mx-auto">
         <div class="lg:w-1/2 text-left mt-60">
             <h1 class="text-4xl font-bold mb4">Discover Restaurants & Delicious Food</h1>
             <p class="text-gray-400 mb-6">
-                Join our community to customise and order meals from a wide variety of restaurants.
+                Join our community to customise and order meals from a wide variety of restaurants. 
             </p>
             <div class="space-x-4">
                 <!---<button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">REGISTER</button>--->
-                <a href="/register"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">REGISTER</a>
-                <a href="/login"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">LOGIN</a>
+                <a href="/role_selection" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">REGISTER</a>
+                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">LOGIN</button>
             </div>
         </div>
         <div class="lg:w-1/2 flex flex-col space-y-4 items-center">
             <div class="w-64 h-64 mt-5">
-                <img src="/static/images/foodHomepage.jpeg" alt="Image Food 1"
-                    class="rounded-xl object-cover w-full h-full">
+                <img src="/static/images/foodHomepage.jpeg" alt="Image Food 1" class="rounded-xl object-cover w-full h-full">
             </div>
             <div class="w-64 h-64">
-                <img src="/static/images/food2Home.jpeg" alt="Image Food 2"
-                    class="rounded-xl object-cover w-full h-full">
+                <img src="/static/images/food2Home.jpeg" alt="Image Food 2" class="rounded-xl object-cover w-full h-full">
             </div>
         </div>
     </div>
-    <div class="flex justify-end p-6">
-        <div class="flex items-center">
+    <footer class="w-full p-6 absolute bottom-0 right-0">
+        <div class="flex justify-end items-center w-full">
             <img src="/static/images/Foodie.png" alt="Foodie logo" class="w-10 h-10 mr-2">
-            <p class="text-xl font-bold">FODDIE.</p>
+            <p class="text-xl font-bold">FOODIE.</p>
         </div>
-    </div>
-
+    </footer>
+    
 </body>
-
 </html>
