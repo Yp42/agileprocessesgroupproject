@@ -12,13 +12,16 @@
     <div
         class="flex flex-col lg:flex-row justify-between items-center lg:items-start p-8 space-y-8 lg:space-y-0 lg:space-x-8 max-w-6xl mx-auto">
         <div class="lg:w-1/2 text-left mt-60">
-            <form method="post">
-                <h1 class="p-2 m-6">Login</h1>
+            <form action="/login" method="post">
+                <h1 class="p-2 m-6 text-4xl font-bold mb4">Login</h1>
+                {% if failed %}
+                <p class="p-2 ml-6">Invalid username or password</p>
+                {% endif %}
                 <input type="text" name="username" id="username" placeholder="Username" class="p-2 m-6 rounded-xl">
                 <br>
                 <input type="text" name="pswd" id="pswd" placeholder="Password" class="p-2 m-6 rounded-xl">
                 <br>
-                <button type="submit"
+                <button type="submit" value="submit"
                     class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 p-2 m-6">LOGIN</button>
             </form>
         </div>
