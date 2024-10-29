@@ -1,19 +1,20 @@
+
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import mongo
 import os
 
 
+main = Blueprint("main", __name__)
 
-main = Blueprint('main', __name__)
-
-@main.route('/')
+@main.route("/")
 def index():
-    return render_template('index.html')
-
+    return render_template("index.html")
+  
+  
 @main.route('/role_selection')
 def role_selection():
-    return render_template('role.html')
+  return render_template('role.html')
 
 @main.route('/handle_role', methods=['POST'])
 def handle_role():
@@ -23,6 +24,7 @@ def handle_role():
     elif role == 'owner':
         return redirect(url_for('main.register_owner'))
     return redirect('/role_selection')
+
 
 
 
@@ -100,4 +102,24 @@ def register_owner():
             return redirect(url_for('main.index'))
                 
     return render_template('register_owner.html')
+
+
+@main.route('/customer_dashboard')
+def customer_dashboard():
+     return render_template('customer_dashboard.html')
+
+
+@main.route('/owner_dashboard')
+def owner_dashboard():
+     return render_template('owner_dashboard.html')
+
+@main.route("/login", methods=("GET", "POST"))
+def login():
+    if request.method == "POST":
+        if request.form["username"] == "123" and request.form["pswd"] == "123":
+            return render_template("index.html")
+        else:
+            return render_template("login.html", failed=True)
+    else:
+        return render_template("login.html")
 
