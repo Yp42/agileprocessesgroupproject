@@ -104,6 +104,15 @@ def register_owner():
     return render_template('register_owner.html')
 
 
+@main.route('/customer_dashboard')
+def customer_dashboard():
+     return render_template('customer_dashboard.html')
+
+
+@main.route('/owner_dashboard')
+def owner_dashboard():
+     return render_template('owner_dashboard.html')
+
 @main.route("/login", methods=("GET", "POST"))
 def login():
     if request.method == "POST":
@@ -113,3 +122,4 @@ def login():
             return render_template("login.html", failed=True)
     else:
         return render_template("login.html")
+
