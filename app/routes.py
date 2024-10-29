@@ -101,3 +101,11 @@ def register_owner():
                 
     return render_template('register_owner.html')
 
+@main.route('/customer_dashboard')
+def customer_dashboard():
+     return render_template('customer_dashboard.html')
+
+
+@main.route('/owner_dashboard')
+def owner_dashboard():
+     return render_template('owner_dashboard.html')
