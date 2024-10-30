@@ -1,74 +1,26 @@
-
-<html>
-
-<head>
-  <link rel="stylesheet" href="app/static/css/login.css">
-</head>
-<form action="action_page.php" method="post">
-  <div class="imgcontainer">
-    <img src="img/icon.png" alt="Icon" class="icon">
-  </div>
-
-  <div class="container">
-    <label for="uname"><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="uname" required>
-    <br>
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
-    <br>
-    <button type="button">Cancel</button>
-    <button type=" submit">Login</button>
-    <br>
-    <label>
-      <input type="checkbox" checked="checked" name="remember"> Remember me
-    </label>
-  </div>
-</form>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body class="bg-black text-white">
-    <div
-        class="flex flex-col lg:flex-row justify-between items-center lg:items-start p-8 space-y-8 lg:space-y-0 lg:space-x-8 max-w-6xl mx-auto">
-        <div class="lg:w-1/2 text-left mt-60">
-            <form action="/login" method="post">
-                <h1 class="p-2 m-6 text-4xl font-bold mb4">Login</h1>
-                {% if failed %}
-                <p class="p-2 ml-6">Invalid username or password</p>
-                {% endif %}
-                <input type="text" name="username" id="username" placeholder="Username" class="p-2 m-6 rounded-xl">
-                <br>
-                <input type="text" name="pswd" id="pswd" placeholder="Password" class="p-2 m-6 rounded-xl">
-                <br>
-                <button type="submit" value="submit"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 p-2 m-6">LOGIN</button>
-            </form>
-        </div>
-        <div class="lg:w-1/2 flex flex-col space-y-4 items-center">
-            <div class="w-64 h-64 mt-5">
-                <img src="/static/images/foodHomepage.jpeg" alt="Image Food 1"
-                    class="rounded-xl object-cover w-full h-full">
-            </div>
-            <div class="w-64 h-64">
-                <img src="/static/images/food2Home.jpeg" alt="Image Food 2"
-                    class="rounded-xl object-cover w-full h-full">
-            </div>
-        </div>
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-sm w-full">
+        <h1 class="text-3xl font-bold mb-6 text-center">Login</h1>
+        <form action="/login" method="post" class="flex flex-col space-y-4">
+            {% if failed %}
+            <p class="bg-red-500 text-white p-3 rounded">Invalid username or password</p>
+            {% endif %}
+            <input type="email" name="email" id="email" placeholder="Email" 
+                class="p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" name="password" id="password" placeholder="Password" 
+                class="p-3 rounded bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" class="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 transition duration-200">
+                LOGIN
+            </button>
+        </form>
     </div>
-    <div class="flex justify-end p-6">
-        <div class="flex items-center">
-            <img src="/static/images/Foodie.png" alt="Foodie logo" class="w-10 h-10 mr-2">
-            <p class="text-xl font-bold">FODDIE.</p>
-        </div>
-    </div>
-
 </body>
 </html>
