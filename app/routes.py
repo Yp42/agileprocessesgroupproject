@@ -4,10 +4,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import mongo
 import os
 from bson import ObjectId
+from datetime import datetime, timedelta, timezone
 
 
 
 main = Blueprint("main", __name__)
+LOCKOUT_TIME = timedelta(minutes=5)
 
 @main.route("/")
 def index():
@@ -117,6 +119,17 @@ def customer_dashboard():
 
 @main.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'lockout_time' in session:
+       lockout_time = session['lockout_time']
+       if isinstance(lockout_time, str):
+           lockout_time = datetime.fromisoformat(lockout_time).replace(tzinfo=timezone.utc)
+       if datetime.now(timezone.utc) < lockout_time:
+           flash('Too many login attempts. Account lockout for 5 minutes')
+           return render_template("login.html", failed=True)
+       else:
+           session.pop('lockout_time', None)
+           session.pop('failed_attempts', None)
+
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -129,13 +142,21 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['email'] = user['email']
             session['role'] = 'owner' if owner else 'customer'
+            session.pop('failed_attempts', None)
             dashboard_route = 'main.owner_dashboard' if owner else 'main.customer_dashboard'
             return redirect(url_for(dashboard_route))
         else:
-            flash('invalid email or password')
+            session['failed_attempts'] = session.get('failed_attempts', 0) + 1
+            if session['failed_attempts'] >= 3:
+                session['lockout_time'] = (datetime.now(timezone.utc) + LOCKOUT_TIME).isoformat()
+                flash('Too many failed login attempts. Your account is locked out for 5 minutes')
+            else:
+               print("incorrect password or email")
             return render_template('login.html', failed=True)
         
     return render_template("login.html")
+
+
 
 @main.route('/customer_profile')
 def customer_profile():
@@ -271,3 +292,8 @@ def delete_meal(meal_id):
      return redirect(url_for('main.manage_meals'))
 
 
+@main.route('/logout')
+def logout():
+    session.clear()
+    flash("You have been logged out successfully", category="success")
+    return redirect(url_for('main.login'))
