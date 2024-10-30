@@ -1,0 +1,36 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Owner Dashboard{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_scripts %}{% endblock %}
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="flex h-screen">
+        <div class="bg-black text-white w-64 p-6 flex-none">
+            <div class="mb-8">
+                <div class="flex items-center">
+                    <img src="{{ url_for('static', filename='images/Foodie.png') }}" alt="Foodie logo" class="w-10 h-10 mr-2">
+                    <p class="text-xl font-bold">FOODIE Owner Dashboard</p>
+                </div>
+            </div>
+            <nav class="space-y-4">
+                <a href="{{ url_for('main.owner_dashboard') }}" class="block text-white hover:bg-gray-700 px-4 py-2 rounded-lg">Dashboard</a>
+                <a href="{{ url_for('main.manage_meals') }}" class="block text-white hover:bg-gray-700 px-4 py-2 rounded-lg">Manage Meals</a>
+                <a href="/" class="block text-white hover:bg-gray-700 px-4 py-2 rounded-lg">Orders</a>
+                <a href="/" class="block text-white hover:bg-gray-700 px-4 py-2 rounded-lg">Notifications</a>
+                <a href="{{ url_for('main.owner_profile') }}" class="block text-white hover:bg-gray-700 px-4 py-2 rounded-lg">Profile Details</a>
+                <a href="#" class="block text-white px-4 py-2 rounded-lg hover:bg-red-700">Delivery Personnel Management</a>
+                <a href="#" class="block bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">Logout</a>
+            </nav>
+        </div>
+        <div class="flex-1 p-8 bg-gray-100 overflow-auto">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
