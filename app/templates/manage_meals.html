@@ -3,19 +3,19 @@
 {% block title %}Manage Meals - Owner Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="text-4xl font-bold mb-6">Add Dishes</h1>
+<h1 class="text-4xl font-bold mb-6 text-gray-200 ml-4">Add Dishes</h1>
 
-<form id="addDishForm" method="POST" action="{{ url_for('main.add_meal') }}" class="mb-6">
+<form id="addDishForm" method="POST" action="{{ url_for('main.add_meal') }}" class="mb-6 ml-4">
     <input type="text" name="name" placeholder="Dish Name" required class="p-2 rounded-lg text-black mb-2">
     <input type="number" step="0.01" name="price" placeholder="Price" required class="p-2 rounded-lg text-black mb-2">
     <input type="text" name="photo" placeholder="Photo URL" required class="p-2 rounded-lg text-black mb-2">
     <input type="text" name="ingredients" placeholder="Ingredients (comma separated)" required class="p-2 rounded-lg text-black mb-2">
-    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700">Add Dish</button>
+    <button type="submit" class="bg-orange-600 text-gray-200 px-6 py-2 rounded-lg font-semibold hover:bg-orange-700">Add Dish</button>
 </form>
 
-<div id="dishesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div id="dishesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ml-4">
     {% for dish in dishes %}
-    <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+    <div class="bg-white rounded-xl shadow-lg p-6 text-cente hover:shadow-xl  transition-shadow duration-300">
         <img src="{{ dish.photo }}" alt="{{ dish.name }}" class="w-full h-48 object-cover rounded-md mb-4">
         <h2 class="text-2xl font-semibold mb-2">{{ dish.name }}</h2>
         <p class="text-gray-700 mb-2">Price: €{{ dish.price }}</p>

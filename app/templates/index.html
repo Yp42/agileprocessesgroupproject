@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,35 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Discover Restaurants & Delicious Food</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-text {
+            background: linear-gradient(to right, #f12711, #f5af19);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-effect {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .solid-effect {
+            background: #111827; 
+        }
+        .zoom:hover {
+            transform: scale(1.1);
+            transition: transform 0.5s ease-in-out;
+        }
+        .icon-move-up {
+            transition: transform 0.3s ease;
+        }
+        .icon-move-up:hover {
+            transform: translateY(-2px);
+        }
+        .feature-icon {
+            color: #f5af19;
+        }
+    </style>
 </head>
-<body class="bg-black text-white">
-    <div class="flex flex-col lg:flex-row justify-between items-center lg:items-start p-8 space-y-8 lg:space-y-0 lg:space-x-8 max-w-6xl mx-auto">
-        <div class="lg:w-1/2 text-left mt-60">
-            <h1 class="text-4xl font-bold mb4">Discover Restaurants & Delicious Food</h1>
-            <p class="text-gray-400 mb-6">
-                Join our community to customise and order meals from a wide variety of restaurants. 
-            </p>
-            <div class="space-x-4">
-                <!---<button class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">REGISTER</button>--->
-                <a href="/role_selection" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">REGISTER</a>
-                <a href="/login" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700">LOGIN</a>
+<body class="bg-gray-900 text-gray-100">
+    <nav class="glass-effect sticky top-0 z-50 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="/" class="text-3xl font-bold gradient-text">FOODIE</a>
+            <div class="flex space-x-4">
+                <a href="/role_selection" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                    <i class="fas fa-user-plus mr-2 icon-move-up"></i>REGISTER
+                </a>
+                <a href="/login" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                    <i class="fas fa-sign-in-alt mr-2 icon-move-up"></i>LOGIN
+                </a>
+            </div>
+        </nav>
+        <div class="flex flex-col lg:flex-row justify-between items-center lg:items-start p-8 space-y-8 lg:space-y-0 lg:space-x-8 max-w-6xl mx-auto">
+            <div class="lg:w-1/2">
+                <h1 class="text-4xl font-bold gradient-text mb-4">Discover Restaurants & Delicious Food</h1>
+                <p class="text-gray-400 mb-6">
+                    Join our community to customize and order meals from a wide variety of restaurants.
+                </p>
+            </div>
+            <div class="lg:w-1/2 flex flex-row justify-center items-center space-x-4"> 
+                <img src="/static/images/foodHomepage.jpeg" alt="Image Food 1" class="rounded-xl object-cover w-64 h-64 zoom">
+                <img src="/static/images/food2Home.jpeg" alt="Image Food 2" class="rounded-xl object-cover w-64 h-64 zoom">
             </div>
         </div>
-        <div class="lg:w-1/2 flex flex-col space-y-4 items-center">
-            <div class="w-64 h-64 mt-5">
-                <img src="/static/images/foodHomepage.jpeg" alt="Image Food 1" class="rounded-xl object-cover w-full h-full">
-            </div>
-            <div class="w-64 h-64">
-                <img src="/static/images/food2Home.jpeg" alt="Image Food 2" class="rounded-xl object-cover w-full h-full">
+        <div class="text-center py-12">
+            <h2 class="text-3xl font-bold text-white mb-6">Why Choose Foodie?</h2>
+            <div class="flex flex-col md:flex-row justify-center gap-10 px-5">
+                <div class="text-white max-w-sm">
+                    <i class="fas fa-utensils fa-2x mb-4 feature-icon"></i>
+                    <h3 class="font-bold text-xl mb-2">Diverse Cuisines</h3>
+                    <p>Choose from an extensive range of cuisines and discover new tastes and experiences.</p>
+                </div>
+                <div class="text-white max-w-sm">
+                    <i class="fas fa-shipping-fast fa-2x mb-4 feature-icon"></i>
+                    <h3 class="font-bold text-xl mb-2">Fast Delivery</h3>
+                    <p>Get your favorite meals delivered fast and hot, ensuring you enjoy every bite as it's meant to be.</p>
+                </div>
+                <div class="text-white max-w-sm">
+                    <i class="fas fa-star fa-2x mb-4 feature-icon"></i>
+                    <h3 class="font-bold text-xl mb-2">Top-Rated Services</h3>
+                    <p>Experience service excellence with top-rated restaurants providing exceptional quality and service.</p>
+                </div>
             </div>
         </div>
-    </div>
-    <footer class="w-full p-6 absolute bottom-0 right-0">
-        <div class="flex justify-end items-center w-full">
-            <img src="/static/images/Foodie.png" alt="Foodie logo" class="w-10 h-10 mr-2">
-            <p class="text-xl font-bold">FOODIE.</p>
-        </div>
-    </footer>
-    
+        <footer class="solid-effect w-full p-6">
+            <div class="flex justify-end items-center w-full">
+                <img src="/static/images/Foodie.png" alt="Foodie logo" class="w-10 h-10 mr-2">
+                <p class="text-xl gradient-text">FOODIE.</p>
+            </div>
+        </footer>
 </body>
 </html>

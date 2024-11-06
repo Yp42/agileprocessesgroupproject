@@ -17,34 +17,34 @@
   {% endif %}
 {% endwith %}
 <div class="max-w-4xl mx-auto">
-    <h1 class="text-4xl font-bold mb-6">Owner Profile</h1>
-    <div class="bg-white text-black rounded-lg p-6">
+    <h1 class="text-4xl font-bold mb-6 gradient-text">Owner Profile</h1>
+    <div class="glass-effect text-gray-100 rounded-lg p-6">
         <form action="{{ url_for('main.edit_owner_profile') }}" method="POST">
             <div class="mb-4">
-                <label for="owner_name" class="block text-lg font-medium">Owner Name:</label>
-                <input type="text" id="owner_name" name="owner_name" value="{{ owner.owner_name }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                <label for="owner_name" class="block text-lg font-medium text-gray-300">Owner Name:</label>
+                <input type="text" id="owner_name" name="owner_name" value="{{ owner.owner_name }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-700" required>
             </div>
             <div class="mb-4">
-                <label for="restaurant_name" class="block text-lg font-medium">Restaurant Name:</label>
-                <input type="text" id="restaurant_name" name="restaurant_name" value="{{ owner.restaurant_name }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                <label for="restaurant_name" class="block text-lg font-medium text-gray-300">Restaurant Name:</label>
+                <input type="text" id="restaurant_name" name="restaurant_name" value="{{ owner.restaurant_name }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-700" required>
             </div>
             <div class="mb-4">
-                <label for="restaurant_address" class="block text-lg font-medium">Restaurant Address:</label>
-                <input type="text" id="restaurant_address" name="restaurant_address" value="{{ owner.restaurant_address }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+                <label for="restaurant_address" class="block text-lg font-medium text-gray-300">Restaurant Address:</label>
+                <input type="text" id="restaurant_address" name="restaurant_address" value="{{ owner.restaurant_address }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-700" required>
             </div>
             <div class="mb-4">
-                <label for="opening_hours" class="block text-lg font-medium">Opening Hours:</label>
+                <label for="opening_hours" class="block text-lg font-medium text-gray-300">Opening Hours:</label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {% for day, hours in owner.opening_hours.items() %}
                         <div>
                             <label class="block font-medium">{{ day }}</label>
-                            <input type="text" name="{{ day.lower() }}_open" placeholder="Open Time" value="{{ hours.open if hours else '' }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 mb-2">
-                            <input type="text" name="{{ day.lower() }}_close" placeholder="Close Time" value="{{ hours.close if hours else '' }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <input type="text" name="{{ day.lower() }}_open" placeholder="Open Time" value="{{ hours.open if hours else '' }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 mb-2 text-gray-700">
+                            <input type="text" name="{{ day.lower() }}_close" placeholder="Close Time" value="{{ hours.close if hours else '' }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-700">
                         </div>
                     {% endfor %}
                 </div>
             </div>
-            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg">Save Changes</button>
+            <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg"> Save Changes</button>
         </form>
     </div>
 </div>
