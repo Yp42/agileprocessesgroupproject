@@ -1,18 +1,5 @@
 
-""""
 
-from flask import Flask
-
-
-
-def app():
-    app = Flask(__name__)
-
-    from .routes import main
-    app.register_blueprint(main)
-
-    return app
-"""
 
 from flask import Flask
 from flask_pymongo import PyMongo
@@ -29,6 +16,8 @@ def create_app():
     app.config['MONGO_URI'] = os.getenv('MONGO_URI', 'mongodb://localhost:27017/Foodie')
     mongo = PyMongo(app)
     CORS(app)
+    app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/images/uploads')
+
 
     with app.app_context():
         mongo.db.customers.create_index("email", unique=True)
