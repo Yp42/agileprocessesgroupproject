@@ -1,5 +1,3 @@
-
-
 {% extends "owner_layout.html" %}
 
 {% block title %}Owner Profile{% endblock %}
@@ -19,7 +17,8 @@
 <div class="max-w-4xl mx-auto">
     <h1 class="text-4xl font-bold mb-6 gradient-text">Owner Profile</h1>
     <div class="glass-effect text-gray-100 rounded-lg p-6">
-        <form action="{{ url_for('main.edit_owner_profile') }}" method="POST">
+
+        <form action="{{ url_for('main.edit_owner_profile') }}" method="POST" enctype="multipart/form-data">
             <div class="mb-4">
                 <label for="owner_name" class="block text-lg font-medium text-gray-300">Owner Name:</label>
                 <input type="text" id="owner_name" name="owner_name" value="{{ owner.owner_name }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-700" required>
@@ -33,6 +32,10 @@
                 <input type="text" id="restaurant_address" name="restaurant_address" value="{{ owner.restaurant_address }}" class="mt-1 block w-full px-3 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-700" required>
             </div>
             <div class="mb-4">
+              <label for="custom_meals" class="block text-lg font-medium text-gray-300">Provide Custom Meals:</label>
+              <input type="checkbox" id="custom_meals" name="custom_meals" {% if owner.custom_meals %}checked{% endif %} class="mt-1">
+          </div>
+            <div class="mb-4">
                 <label for="opening_hours" class="block text-lg font-medium text-gray-300">Opening Hours:</label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {% for day, hours in owner.opening_hours.items() %}
@@ -44,7 +47,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg"> Save Changes</button>
+            <button type="submit" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded-lg">Save Changes</button>
         </form>
     </div>
 </div>

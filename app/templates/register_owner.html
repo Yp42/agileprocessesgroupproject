@@ -34,17 +34,24 @@
                     <h2 class="text-xl font-bold ml-2 gradient-text">FOODIE.</h2>
                 </div>
                 <h2 class="text-2xl font-bold mb-6 text-center">Create a Restaurant Owner Account</h2>
-                <form action="#" method="POST">
+                <form action="{{ url_for('main.register_owner') }}" method="POST" enctype="multipart/form-data">
                     <div class="mb-4">
-                        <input type="text" name="restaurant_name" placeholder="Restaurant Name" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-orange-500 outline-none">
+                        <input type="text" name="restaurant_name" placeholder="Restaurant Name" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 
+                                      focus:border-orange-500 outline-none">
                     </div>
                     <div class="mb-4">
                         <input type="text" name="restaurant_address" placeholder="Restaurant Address" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-orange-500  outline-none">
                     </div>
                     <div class="mb-4">
+                        <label for="custom_meals" class="inline-flex items-center text-lg font-medium text-gray-300">
+                            <input type="checkbox" id="custom_meals" name="custom_meals" class="form-checkbox h-5 w-5 text-orange-500 border-gray-300 rounded">
+                            <span class="ml-2">Provide Custom Meals</span>
+                        </label>
+                    </div>
+                    <div class="mb-4">
                         <label class="block font-bold mb-2">Opening Hours:</label>
                         <div class="space-y-2">
-                            <!-- Repeat this block for each day -->
+                         
                             {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] %}
                             <div>
                                 <label class="inline-flex items-center">
@@ -69,6 +76,10 @@
                     <div class="mb-4">
                         <input type="password" name="password" placeholder="Password" class="w-full p-2 rounded bg-gray-700 text-white border border-gray-600 focus:border-orange-500 outline-none">
                     </div>
+                    <div class="mb-4">
+                        <label class="block font-bold mb-2">Restaurant Photo:</label>
+                        <input type="file" name="restaurant_photo" accept="image/*" class="w-full bg-gray-700 border border-gray-600 p-2 rounded text-white">
+                    </div>
                     <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded">Sign up</button>
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -83,12 +94,14 @@
                 {% endwith %}
                 
                 </form>
+                
                 <div class="text-center mt-4">
                     Already have an account? <a href="/login" class="text-blue-400 hover:text-blue-300">Log in</a>
                 </div>
             </div>
         </div>
     </div>
+    
     <script src="/static/js/opening_hours.js"></script>
 </body>
 </html>

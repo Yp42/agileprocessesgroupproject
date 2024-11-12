@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    
+
+    <div class="bg-gray-900 p-6 rounded-lg shadow-lg text-center mb-8">
+        <h1 class="text-4xl font-bold gradient-text my-4">{{ restaurant.restaurant_name }}</h1>
+        <p class="text-lg text-gray-300 mb-2"><strong>Address:</strong> {{ restaurant.restaurant_address }}</p>
+        
+        <div class="text-lg text-gray-300 mb-4">
+            <p class="mb-2 font-semibold text-gray-200"><strong>Opening Hours:</strong></p>
+            <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for day, hours in restaurant.opening_hours.items() %}
+                    <li class="flex items-center justify-between bg-gray-800 p-3 rounded-lg">
+                        <span class="text-gray-400 font-medium">{{ day }}</span>
+                        <span class="text-sm text-green-400 font-semibold">
+                            {% if hours %}
+                                <i class="far fa-clock text-orange-500"></i> {{ hours.open }} - {{ hours.close }}
+                            {% else %}
+                                <span class="text-red-500 font-semibold">Closed</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-semibold gradient-text mb-4">Menu</h2>
+        <p class="text-gray-400">Discover our delicious offerings below</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for meal in meals %}
+        <div class="card bg-gray-800 hover:shadow-lg rounded-lg overflow-hidden">
+          
+            {% if meal.photo %}
+            <img src="{{ url_for('static', filename=meal.photo) }}" alt="{{ meal.name }} Image" class="w-full h-48 object-cover">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/default-meal.jpg') }}" alt="Default Meal Image" class="w-full h-48 object-cover">
+            {% endif %}
+            
+         
+            <div class="p-4">
+                <h3 class="text-xl font-semibold text-gray-200 mb-1">{{ meal.name }}</h3>
+                <p class="text-lg font-semibold text-orange-400 mb-2">€{{ meal.price }}</p>
+                <p class="text-gray-400 text-sm">Ingredients: {{ meal.ingredients | join(', ') }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+

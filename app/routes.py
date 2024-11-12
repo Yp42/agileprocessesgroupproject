@@ -1,6 +1,7 @@
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, abort
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, abort, current_app
+from werkzeug.security import generate_password_hash, check_password_hash, safe_join
+from werkzeug.utils import secure_filename
 from app import mongo
 import os
 from bson import ObjectId
@@ -10,6 +11,10 @@ from datetime import datetime, timedelta, timezone
 
 main = Blueprint("main", __name__)
 LOCKOUT_TIME = timedelta(minutes=5)
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @main.route("/")
 def index():
@@ -48,6 +53,7 @@ def register_customer():
                 flash('Email already exists')
                 return redirect(url_for('main.register_customer'))
             
+            
             mongo.db.customers.insert_one({
                 'name': name,
                 'email': email,
@@ -80,6 +86,7 @@ def register_owner():
                 flash('Email already exists')
                 return redirect(url_for('main.register_owner'))
             
+            
 
             for day in days:
                 open_time = request.form.get(f'{day.lower()}_open')
@@ -88,18 +95,26 @@ def register_owner():
                     opening_hours[day] = {'open': open_time, 'close': close_time}
                 else:
                     opening_hours[day] = None
-                    
-                    
-                    
+
+            custom_meals = 'custom_meals' in request.form
+            file = request.files.get('restaurant_photo')
+            if file and allowed_file(file.filename):
+                photo_path = save_image(file)
+            if not photo_path:
+                flash("Failed to save image. Please try again.", category="error")
+                return redirect(url_for('main.register_owner'))
                     
             mongo.db.owners.insert_one({
                  'restaurant_name': restaurant_name,
                  'restaurant_address': restaurant_address,
+                  'custom_meals': custom_meals,
                  'opening_hours': opening_hours,
                  'owner_name': owner_name,
                  'email': email,
                  'username': username,
-                 'password': password
+                 'password': password,
+                 'photo_path': photo_path
+                
                  })
             
            
@@ -169,6 +184,9 @@ def customer_profile():
         return redirect(url_for('main.index'))
     return render_template('customer_profile.html', customer=customer)
 
+
+
+
 @main.route('/owner_profile', methods=['GET', 'POST'])
 def owner_profile():
     if 'email' not in session or session.get('role') != 'owner':
@@ -180,6 +198,7 @@ def owner_profile():
             'owner_name': request.form.get('owner_name'),
             'restaurant_name': request.form.get('restaurant_name'),
             'restaurant_address': request.form.get('restaurant_address'),
+            'custom_meals': 'custom_meals' in request.form,
             'opening_hours': {
                 day: {
                     'open': request.form.get(f'{day.lower()}_open'),
@@ -188,6 +207,8 @@ def owner_profile():
             }
 
         }
+       
+
 
         mongo.db.owners.update_one({'email': session['email']}, {'$set': updated_data})
         flash('Profile updated successfully', category='success')
@@ -197,6 +218,8 @@ def owner_profile():
     if owner:
         owner['_id'] = str(owner['_id'])
     return render_template('owner_profile.html', owner=owner)
+
+
 
 
 @main.route('/edit_owner_profile', methods=['GET', 'POST'])
@@ -211,6 +234,7 @@ def edit_owner_profile():
             'restaurant_address': request.form.get('restaurant_address'),
             
         }
+        
 
         mongo.db.owners.update_one({'email': session['email']}, {'$set': updated_data})
         flash('Profile updated successfully', category='success')
@@ -257,29 +281,56 @@ def manage_meals():
     return render_template('manage_meals.html', dishes=meal_list)
 
 
-@main.route('/add_meal', methods=['GET', 'POST'])
+@main.route('/add_meal', methods=['POST'])
 def add_meal():
     if 'email' not in session or session.get('role') != 'owner':
-        flash("You must be logged in as an owner to view this page.", category='error')
+        flash("You must be logged in as an owner to add a meal.", category='error')
         return redirect(url_for('main.login'))
     
-    if request.method == 'POST':
-        name = request.form.get('name')
-        price = float(request.form.get('price'))
-        photo = request.form.get('photo')
-        ingredients = [ingredient.strip() for ingredient in request.form.get('ingredients').split(',')]
-        mongo.db.meals.insert_one({
-            'name': name,
-            'price': price,
-            'photo': photo,
-            'ingredients': ingredients,
-            'owner_email': session['email']
-        })
-
-        flash("Meal added successfully!", category="success")
+    name = request.form.get('name')
+    price = request.form.get('price')
+    ingredients = request.form.get('ingredients')
+    file = request.files.get('photo') 
+    
+    
+    if not name or not price or not file or not ingredients:
+        flash("All fields are required.", category="error")
         return redirect(url_for('main.manage_meals'))
 
+    
+    if file and allowed_file(file.filename):
+        photo_path = save_image(file) 
+        if not photo_path:
+            flash("Failed to save image. Please try again.", category="error")
+            return redirect(url_for('main.manage_meals'))
+    else:
+        flash("Invalid file type. Only images are allowed.", category="error")
+        return redirect(url_for('main.manage_meals'))
+
+ 
+    try:
+        price = float(price)
+    except ValueError:
+        flash("Please enter a valid number for price.", category="error")
+        return redirect(url_for('main.manage_meals'))
+    
+    ingredients_list = [ingredient.strip() for ingredient in ingredients.split(',')]
+    owner_email = session['email']
+    restaurant = mongo.db.owners.find_one({'email': owner_email})
+    
+ 
+    mongo.db.meals.insert_one({
+        'name': name,
+        'price': price,
+        'photo': photo_path, 
+        'ingredients': ingredients_list,
+        'owner_email': owner_email,
+        'restaurant_id': restaurant['_id']
+    })
+
+    flash("Meal added successfully!", category="success")
     return redirect(url_for('main.manage_meals'))
+
     
     
 @main.route('/delete_meal/<meal_id>', methods=['POST'])
@@ -297,3 +348,60 @@ def logout():
     session.clear()
     flash("You have been logged out successfully", category="success")
     return redirect(url_for('main.login'))
+
+
+@main.route('/restaurants')
+def restaurants():
+    if 'email' not in session:
+        flash("You must be logged in to view this page.", category='error')
+        return redirect(url_for('main.login'))
+
+    restaurant_list = mongo.db.owners.find({}, {'restaurant_name': 1, 'photo_path': 1, 'custom_meals': 1}) 
+    return render_template('restaurants.html', restaurants=restaurant_list)
+
+
+
+@main.route('/view_menu/<restaurant_id>')
+def view_menu(restaurant_id):
+  
+    restaurant = mongo.db.owners.find_one({'_id': ObjectId(restaurant_id)})
+    if not restaurant:
+        flash("Restaurant not found", category='error')
+        return redirect(url_for('main.restaurants'))
+
+  
+    meals = mongo.db.meals.find({'restaurant_id': restaurant['_id']})
+   
+    return render_template('view_menu.html', restaurant=restaurant, meals=meals)
+
+
+def save_image(image):
+    if image and allowed_file(image.filename):
+        filename = secure_filename(image.filename)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        image.save(filepath)
+        return os.path.join('images/uploads', filename).replace('\\', '/')
+    return None
+
+
+
+@main.route('/update_owner_profile', methods=['POST'])
+def update_owner_profile():
+    if 'email' not in session or session.get('role') != 'owner':
+        flash('You must be logged in and an owner to view this page', category='error')
+        return redirect(url_for('main.login'))
+
+    owner = mongo.db.owners.find_one({'email': session['email']})
+    if owner:
+        file = request.files.get('restaurant-photo')
+        photo_url = save_image(file) if file else None
+        if photo_url: 
+            updated_data = {'photo': photo_url}
+            mongo.db.owners.update_one({'email': session['email']}, {'$set': updated_data})
+            flash('Photo updated successfully', category='success')
+        else:
+            flash('No photo uploaded or invalid file type', category='error')
+        return redirect(url_for('main.owner_profile'))
+    else:
+        flash('Owner profile not found', category='error')
+        return redirect(url_for('main.login'))
