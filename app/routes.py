@@ -331,7 +331,26 @@ def add_meal():
     flash("Meal added successfully!", category="success")
     return redirect(url_for('main.manage_meals'))
 
-    
+@main.route('/view_meal/<meal_id>', methods=["GET", "POST"])
+def view_meal(meal_id):
+    if 'email' not in session or session.get('role')!='customer':
+        flash("You must be logged in as a customer to view this page.", category='error')
+        return redirect(url_for('main.login'))
+    meal = mongo.db.meals.find_one({'_id': ObjectId(meal_id)})
+    if not meal:
+        flash("Meal not found", category='error')
+        return redirect(url_for('main.restaurants'))
+    restaurant = mongo.db.owners.find_one({'_id': meal['restaurant_id']})
+    allows_custom_meals = restaurant.get('custom_meals', False)
+
+    if request.method == 'POST' and allows_custom_meals:
+        new_ingredient = request.form.get('new_ingredient')
+        if new_ingredient:
+            mongo.db.meals.update_one({'_id': ObjectId(meal_id)}, {'$push': {'ingredients': new_ingredient}})
+            flash("Ingredient added successfully!", category="success")
+            return redirect(url_for('main.view_meal', meal_id=meal_id))
+    return render_template('view_meal.html', meal=meal, allows_custom_meals=allows_custom_meals)
+
     
 @main.route('/delete_meal/<meal_id>', methods=['POST'])
 def delete_meal(meal_id):
