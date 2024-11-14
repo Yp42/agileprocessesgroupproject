@@ -47,6 +47,12 @@
                 <h3 class="text-xl font-semibold text-gray-200 mb-1">{{ meal.name }}</h3>
                 <p class="text-lg font-semibold text-orange-400 mb-2">€{{ meal.price }}</p>
                 <p class="text-gray-400 text-sm">Ingredients: {{ meal.ingredients | join(', ') }}</p>
+
+
+                <a href="{{ url_for('main.view_meal', meal_id=meal['_id']) }}" 
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 mt-2 inline-block">
+                View More
+             </a>
             </div>
         </div>
         {% endfor %}
