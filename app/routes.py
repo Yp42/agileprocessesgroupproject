@@ -429,11 +429,23 @@ def view_menu(restaurant_id):
     if not restaurant:
         flash("Restaurant not found", category='error')
         return redirect(url_for('main.restaurants'))
+    
+    search_query = request.args.get('ingredient')
+    if search_query:
+        meals = mongo.db.meals.find({'restaurant_id': restaurant['_id'], 'ingredients': {'$regex': search_query,'$options': 'i'}})
+    else:
+        meals = mongo.db.meals.find({'restaurant_id': restaurant['_id']})
+    
+    meal_list = [{
+        '_id': meal['_id'],
+        'name': meal['name'],
+        'price': meal['price'],
+        'photo': meal.get('photo', 'images/default_meal.jpg'),
+        'ingredients': meal['ingredients']
+    }for meal in meals]
 
-  
-    meals = mongo.db.meals.find({'restaurant_id': restaurant['_id']})
    
-    return render_template('view_menu.html', restaurant=restaurant, meals=meals)
+    return render_template('view_menu.html', restaurant=restaurant, meals=meal_list, search_query=search_query)
 
 
 def save_image(image):
