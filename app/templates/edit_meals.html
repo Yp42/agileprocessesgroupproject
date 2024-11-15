@@ -1,0 +1,19 @@
+
+
+{% extends "owner_layout.html" %}
+{% block title %} Edit Meal - {{meal.name}}{% endblock %}
+{% block content %}
+<h1 class="text-4xl font-bold mb-6 text-gray-200 ml-4 ">Edit {{meal.name}}</h1>
+<form method="POST" action="{{url_for('main.edit_meal', meal_id=meal['_id'])}}" enctype="multipart/form-data" class="mb-6 ml-4">
+    <input type="text" name="name" value="{{meal.name}}" placeholder="Dish name" required class="p-2 rounded-lg text-black mb-2">
+    <input type="number" step="0.01" name="price" value="{{meal.price}}" placeholder="Price" required class="p-2 rounded-lg text-black mb-2">
+
+    {% if meal.photo %}
+    <img src="{{url_for('static', filename=meal.photo)}}" alt="{{meal.name}}" class="w-32 h-32 object-cover mb-2">
+
+    {% endif %}
+    <input type="file" name="photo" accept="image/*" class="p-2 rounded-lg text-black mb-2">
+    <input type="text" name="ingredients" value="{{meal.ingredients | join(',')}}" placeholder="Ingredients (comma separated)" required class="p-2 rounded-lg text-black mb-2">
+    <button type="submit" class="bg-orange-600 text-gray-200 px-6 py-2 rounded-lg font-semibold hover:bg-orange-700">Update Dish</button>
+</form>
+{% endblock %}
