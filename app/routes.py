@@ -331,6 +331,48 @@ def add_meal():
     flash("Meal added successfully!", category="success")
     return redirect(url_for('main.manage_meals'))
 
+
+@main.route('/edit_meal/<meal_id>', methods=['GET', 'POST'])
+def edit_meal(meal_id):
+    if 'email' not in session or session.get('role')!= 'owner':
+        flash("You must be logged in as an owner to edit a meal.", category='error')
+        return redirect(url_for('main.login'))
+    meal = mongo.db.meals.find_one({'_id': ObjectId(meal_id)})
+    if not meal:
+        flash("Meal not found", category='error')
+        return redirect(url_for('main.manage_meals'))
+    if request.method == 'POST':
+        updated_name = request.form.get('name')
+        updated_price = request.form.get('price')
+        updated_ingredients = request.form.get('ingredients')
+        try:
+            updated_price = float(updated_price)
+        except ValueError:
+            flash("Please enter a valid number for price.", category="error")
+            return redirect(url_for('main.edit_meals', meal_id=meal_id))
+        ingredients_list = [ingredient.strip() for ingredient in updated_ingredients.split(',')]
+        file = request.files.get('photo')
+        if file and allowed_file(file.filename):
+            photo_path = save_image(file)
+            if not photo_path:
+                flash("Failed to save image. Please try again.", category="error")
+                return redirect(url_for('main.edit_meals', meal_id=meal_id))
+        else:
+            photo_path = meal.get('photo')
+
+        mongo.db.meals.update_one({'_id': ObjectId(meal_id)}, {
+            '$set': {
+                'name': updated_name,
+                'price': updated_price,
+                'ingredients': ingredients_list,
+                'photo': photo_path
+                }
+                })
+        flash("Meal updated successfully!", category="success")
+        return redirect(url_for('main.manage_meals'))
+    return render_template('edit_meals.html', meal=meal)
+        
+
 @main.route('/view_meal/<meal_id>', methods=["GET", "POST"])
 def view_meal(meal_id):
     if 'email' not in session or session.get('role')!='customer':
