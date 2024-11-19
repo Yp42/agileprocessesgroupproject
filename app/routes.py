@@ -478,3 +478,42 @@ def update_owner_profile():
     else:
         flash('Owner profile not found', category='error')
         return redirect(url_for('main.login'))
+
+
+
+
+
+@main.route('/cart')
+def view_cart():
+    if 'email' not in session or session.get('role')!= 'customer':
+        flash('You must be logged in and a customer to view this page', category='error')
+        return redirect(url_for('main.login'))
+    cart = session.get('cart', [])
+    total_price = sum([item['price'] for item in cart])
+    return render_template('cart.html', cart=cart, total_price=total_price)
+
+
+@main.route('/add_to_cart/<meal_id>', methods=['POST'])
+def add_to_cart(meal_id):
+    if 'email' not in session or session.get('role') != 'customer':
+        flash('You must be logged in and a customer to view this page', category='error')
+        return redirect(url_for('main.login'))
+    meal = mongo.db.meals.find_one({'_id': ObjectId(meal_id)})
+    if not meal:
+        return redirect(url_for('main.restaurants'))
+    if 'cart' not in session:
+        session['cart'] = []
+    cart_item = {
+        'meal_id' : str(meal['_id']),
+        'meal_name' : meal['name'],
+        'price' : meal['price'],
+        'photo' : meal.get('photo', 'images/'),
+        'ingredients': meal['ingredients']
+
+    }
+    session['cart'].append(cart_item)
+    session.modified = True
+    flash('Meal added to cart', category='success')
+    return redirect(url_for('main.view_cart'))
+
+
