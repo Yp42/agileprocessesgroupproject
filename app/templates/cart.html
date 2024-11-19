@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold mb-6 text-gray-200">Your Shopping Cart</h1>
+
+    {% if cart %}
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
+        <ul>
+            {% for item in cart %}
+            <li class="flex items-center justify-between mb-4 p-4 bg-gray-700 rounded-lg">
+                <div class="flex items-center">
+                    <img src="{{ url_for('static', filename=item.photo) }}" alt="{{ item.name }}" class="w-16 h-16 object-cover rounded-lg mr-4">
+                    <span class="text-gray-200 font-semibold">{{ item.name }}</span>
+                </div>
+                <span class="text-orange-500 font-semibold">£{{ item.price }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="text-right text-gray-200 font-bold text-xl">
+            Total: £{{ total_price }}
+        </div>
+    </div>
+    <button class="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 mt-4">Proceed to Checkout</button>
+    {% else %}
+    <p class="text-gray-400">Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}
