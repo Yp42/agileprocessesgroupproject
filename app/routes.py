@@ -482,6 +482,8 @@ def update_owner_profile():
 
 
     
+
+    
 @main.route('/cart-update', methods=['POST'])
 def update_item():
     data = request.json
@@ -493,7 +495,7 @@ def find_cart_item(item_id):
 
 def remove_cart_item(item_id):
     mongo.db.cart.delete_one({'_id': ObjectId(item_id)})
-
+    
 def calculate_cart_total():
     if 'email' not in session:
         return 0
@@ -501,6 +503,7 @@ def calculate_cart_total():
     cart_items = mongo.db.cart.find({'user_email': user_email})
     return sum(item['price'] * item['quantity'] for item in cart_items)
 
+    
 def get_cart_items():
     if 'email' not in session:
         return []
@@ -517,6 +520,7 @@ def get_cart_items():
         }
         for item in cart_items
     ]
+
 
 
 @main.route("/cart")
@@ -605,4 +609,4 @@ def add_to_cart(meal_id):
     return redirect(url_for('main.cart'))
 
 
-   
+ 
