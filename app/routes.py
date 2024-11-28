@@ -481,6 +481,12 @@ def update_owner_profile():
 
 
 
+    
+@main.route('/cart-update', methods=['POST'])
+def update_item():
+    data = request.json
+    item_id = data['item_id']
+    action = data['action']
 
 def find_cart_item(item_id):
     return mongo.db.cart.find_one({'_id': ObjectId(item_id)})
@@ -512,14 +518,22 @@ def get_cart_items():
         for item in cart_items
     ]
 
-@main.route('/cart')
+
+@main.route("/cart")
 def cart():
     if 'email' not in session or session.get('role') != 'customer':
-        flash('You must be logged in and a customer to view the cart', category='error')
+        flash("You must be logged in as a customer to view your cart.", category="error")
         return redirect(url_for('main.login'))
-    cart_items = get_cart_items()
-    cart_total = calculate_cart_total()
-    return render_template('cart.html', cart_items=cart_items, cart_total=cart_total)
+    try:
+        cart_items = get_cart_items()
+        cart_total = calculate_cart_total()
+        print("Cart Items:", cart_items)  # Debug print
+        return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
+    except Exception as e:
+        print(f"Error rendering cart: {e}")
+        flash("Error loading cart. Please try again.", category="error")
+        return redirect(url_for('main.restaurants'))
+  
 
 
 @main.route('/cart-update', methods=['POST'])
@@ -591,39 +605,4 @@ def add_to_cart(meal_id):
     return redirect(url_for('main.cart'))
 
 
-    
-@main.route('/cart-update', methods=['POST'])
-def update_item():
-    data = request.json
-    item_id = data['item_id']
-    action = data['action']
-
-    cart_item = find_cart_item(item_id)
-
-    if action == 'increase':
-        cart_item['quantity'] += 1
-    elif action == 'decrease':
-        cart_item['quantity'] -= 1
-        if cart_item['quantity'] <= 0:
-            remove_cart_item(item_id)
-    elif action == 'remove':
-        remove_cart_item(item_id)
-
-    cart_total = calculate_cart_total()
-    item_total = cart_item['quantity'] * cart_item['price'] if cart_item['quantity'] > 0 else 0
-
-    cart_html = render_template('cart_items.html', cart_items=get_cart_items()) if not get_cart_items() else None
-
-    return jsonify({
-        'item_total': item_total,
-        'cart_total': cart_total,
-        'item_quantity': cart_item['quantity'] if cart_item['quantity'] > 0 else 0,
-        'cart_html': cart_html
-    })
-
-@main.route('/checkout', methods=['POST'])
-def checkout():
-    flash('checkout not implemented yet', category='warning')
-    return redirect(url_for('main.cart'))
-
-
+   
