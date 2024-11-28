@@ -478,6 +478,9 @@ def update_owner_profile():
     else:
         flash('Owner profile not found', category='error')
         return redirect(url_for('main.login'))
+
+
+
     
 
     
@@ -487,28 +490,123 @@ def update_item():
     item_id = data['item_id']
     action = data['action']
 
-    cart_item = find_cart_item(item_id)
+def find_cart_item(item_id):
+    return mongo.db.cart.find_one({'_id': ObjectId(item_id)})
 
-    if action == 'increase':
-        cart_item['quantity'] += 1
-    elif action == 'decrease':
-        cart_item['quantity'] -= 1
-        if cart_item['quantity'] <= 0:
+def remove_cart_item(item_id):
+    mongo.db.cart.delete_one({'_id': ObjectId(item_id)})
+    
+def calculate_cart_total():
+    if 'email' not in session:
+        return 0
+    user_email = session['email']
+    cart_items = mongo.db.cart.find({'user_email': user_email})
+    return sum(item['price'] * item['quantity'] for item in cart_items)
+
+    
+def get_cart_items():
+    if 'email' not in session:
+        return []
+    user_email = session['email']
+    cart_items = mongo.db.cart.find({'user_email': user_email})
+    return [
+        {
+            'id': str(item['_id']),
+            'name': item['name'],
+            'price': item['price'],
+            'quantity': item['quantity'],
+            'photo': item.get('photo', 'default_image.jpg'),
+            'meal_id': str(item['meal_id'])
+        }
+        for item in cart_items
+    ]
+
+
+
+@main.route("/cart")
+def cart():
+    if 'email' not in session or session.get('role') != 'customer':
+        flash("You must be logged in as a customer to view your cart.", category="error")
+        return redirect(url_for('main.login'))
+    try:
+        cart_items = get_cart_items()
+        cart_total = calculate_cart_total()
+        print("Cart Items:", cart_items)  # Debug print
+        return render_template("cart.html", cart_items=cart_items, cart_total=cart_total)
+    except Exception as e:
+        print(f"Error rendering cart: {e}")
+        flash("Error loading cart. Please try again.", category="error")
+        return redirect(url_for('main.restaurants'))
+  
+
+
+@main.route('/cart-update', methods=['POST'])
+def update_item():
+    if 'email' not in session:
+        flash('You must be logged in to update the cart', category='error')
+        return redirect(url_for('main.login'))
+    try:
+        data = request.json
+        item_id = data['item_id']
+        action = data['action']
+
+        cart_item = find_cart_item(item_id)
+        if not cart_item:
+            return jsonify({'error': 'Item not found in cart'}), 404
+        
+        if action == 'increase':
+            cart_item['quantity'] += 1
+            mongo.db.cart.update_one({'_id': cart_item['_id']}, {'$set': {'quantity': cart_item['quantity']}})
+        elif action == 'decrease':
+            if cart_item['quantity'] > 1:
+                cart_item['quantity'] -= 1
+                mongo.db.cart.update_one({'_id': cart_item['_id']}, {'$set': {'quantity': cart_item['quantity']}})
+            else:
+                remove_cart_item(item_id)
+                cart_item['quantity'] = 0
+        elif action == 'remove':
             remove_cart_item(item_id)
-    elif action == 'remove':
-        remove_cart_item(item_id)
+            cart_item['quantity'] = 0
+        
+        cart_total = calculate_cart_total()
+        item_total = cart_item['price'] * cart_item['quantity'] if cart_item['quantity'] > 0 else 0
+
+        return jsonify({
+            'cart_total': cart_total,
+            'item_total': item_total,
+            'item_quantity': cart_item['quantity'] if cart_item['quantity'] > 0 else 0,
+            'cart_empty': not bool(get_cart_items())
+            })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+        
+       
+
+@main.route('/add_to_cart/<meal_id>', methods=['POST'])
+def add_to_cart(meal_id):
+    if 'email' not in session or session.get('role') != 'customer':
+        flash('You must be logged in and a customer to add items to the cart', category='error')
+        return redirect(url_for('main.login'))
+
+    meal = mongo.db.meals.find_one({'_id': ObjectId(meal_id)})
+    if not meal:
+       return redirect(url_for('main.restaurants'))
+    
+    existing_cart_item = mongo.db.cart.find_one({'user_email': session['email'], 'meal_id': ObjectId(meal_id)})
+    if existing_cart_item:
+        mongo.db.cart.update_one({'_id': existing_cart_item['_id']}, {'$inc': {'quantity': 1}})
+    else:
+        mongo.db.cart.insert_one({
+            'user_email': session['email'],
+           'meal_id': ObjectId(meal_id),
+            'name': meal['name'],
+            'price': meal['price'],
+            'quantity': 1,
+            'photo': meal.get('photo', 'default_image.jpg')
+        })
+    flash(f"Added {meal['name']} to cart", category='success')
+    return redirect(url_for('main.cart'))
 
 
-    cart_total = calculate_cart_total()
-    item_total = cart_item['quantity'] * cart_item['price'] if cart_item['quantity'] > 0 else 0
-
-    cart_html = render_template('cart_items.html', cart_items=get_cart_items()) if not get_cart_items() else None
-
-    return jsonify({
-        'item_total': item_total,
-        'cart_total': cart_total,
-        'item_quantity': cart_item['quantity'] if cart_item['quantity'] > 0 else 0,
-        'cart_html': cart_html
-
-    })
-
+ 
