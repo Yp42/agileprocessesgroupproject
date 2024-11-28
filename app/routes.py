@@ -478,8 +478,7 @@ def update_owner_profile():
     else:
         flash('Owner profile not found', category='error')
         return redirect(url_for('main.login'))
-
-
+    
 
     
 @main.route('/cart-update', methods=['POST'])
@@ -498,9 +497,7 @@ def update_item():
             remove_cart_item(item_id)
     elif action == 'remove':
         remove_cart_item(item_id)
-    elif action == 'reset':  
-        cart_item['quantity'] = 0
-        remove_cart_item(item_id)
+
 
     cart_total = calculate_cart_total()
     item_total = cart_item['quantity'] * cart_item['price'] if cart_item['quantity'] > 0 else 0
@@ -512,4 +509,6 @@ def update_item():
         'cart_total': cart_total,
         'item_quantity': cart_item['quantity'] if cart_item['quantity'] > 0 else 0,
         'cart_html': cart_html
+
     })
+
