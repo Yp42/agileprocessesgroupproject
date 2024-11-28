@@ -481,39 +481,35 @@ def update_owner_profile():
 
 
 
+    
+@main.route('/cart-update', methods=['POST'])
+def update_item():
+    data = request.json
+    item_id = data['item_id']
+    action = data['action']
 
+    cart_item = find_cart_item(item_id)
 
-@main.route('/cart')
-def view_cart():
-    if 'email' not in session or session.get('role')!= 'customer':
-        flash('You must be logged in and a customer to view this page', category='error')
-        return redirect(url_for('main.login'))
-    cart = session.get('cart', [])
-    total_price = sum([item['price'] for item in cart])
-    return render_template('cart.html', cart=cart, total_price=total_price)
+    if action == 'increase':
+        cart_item['quantity'] += 1
+    elif action == 'decrease':
+        cart_item['quantity'] -= 1
+        if cart_item['quantity'] <= 0:
+            remove_cart_item(item_id)
+    elif action == 'remove':
+        remove_cart_item(item_id)
+    elif action == 'reset':  
+        cart_item['quantity'] = 0
+        remove_cart_item(item_id)
 
+    cart_total = calculate_cart_total()
+    item_total = cart_item['quantity'] * cart_item['price'] if cart_item['quantity'] > 0 else 0
 
-@main.route('/add_to_cart/<meal_id>', methods=['POST'])
-def add_to_cart(meal_id):
-    if 'email' not in session or session.get('role') != 'customer':
-        flash('You must be logged in and a customer to view this page', category='error')
-        return redirect(url_for('main.login'))
-    meal = mongo.db.meals.find_one({'_id': ObjectId(meal_id)})
-    if not meal:
-        return redirect(url_for('main.restaurants'))
-    if 'cart' not in session:
-        session['cart'] = []
-    cart_item = {
-        'meal_id' : str(meal['_id']),
-        'meal_name' : meal['name'],
-        'price' : meal['price'],
-        'photo' : meal.get('photo', 'images/'),
-        'ingredients': meal['ingredients']
+    cart_html = render_template('cart_items.html', cart_items=get_cart_items()) if not get_cart_items() else None
 
-    }
-    session['cart'].append(cart_item)
-    session.modified = True
-    flash('Meal added to cart', category='success')
-    return redirect(url_for('main.view_cart'))
-
-
+    return jsonify({
+        'item_total': item_total,
+        'cart_total': cart_total,
+        'item_quantity': cart_item['quantity'] if cart_item['quantity'] > 0 else 0,
+        'cart_html': cart_html
+    })
